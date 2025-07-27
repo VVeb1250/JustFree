@@ -1,0 +1,3 @@
+namespace eqipment
+{
+} // namespace eqipment
