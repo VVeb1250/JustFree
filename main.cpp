@@ -3,8 +3,8 @@
 #include <iostream>
 
 #define doRandom random::getRandomInt(base, floor)
-#define randomHP doRandom * random::getRandomFloat(10, 50)
-#define randomATK doRandom * random::getRandomFloat(1, 5)
+#define randomHP doRandom * random::getRandomFloat4f(10, 50)
+#define randomATK doRandom * random::getRandomFloat4f(1, 5)
 
 
 
@@ -76,5 +76,12 @@ int main() {
     if (enemy.get_Final_HP() > 0) {
         cout << endl << enemy.name << " win" << endl;
     }
-    
+    // int max = 50000;
+    // int amount = 25;
+    // for (int i = 0; i < max; i += max / amount) {
+    //     for (int j = 0; j < max; j += max / amount) {
+    //         crit::__cal_criticaldamage(100, i, j);
+    //         cout << crit::multiplyer << " ";
+    //     } cout << endl;
+    // }
 }

@@ -19,21 +19,32 @@ namespace random
      * @param max maxinum random can be
      * @return int that completely random
      */
-    int getRandomInt(const int& min, const int& max) {
-        std::uniform_int_distribution<> dist(min, max);
+    template<typename T>
+    int getRandomInt(const T& min, const T& max) {
+        std::uniform_int_distribution<int> dist(min, max);
         return dist(gen);
     }
     /**
-     * @brief genarate random number in float
+     * @brief genarate random number in in presition 0.01
      * @param min mininum random can be
      * @param max maxinum random can be
      * @return float that completely random
      */
-    float getRandomFloat(const float& min, const float& max) {
+    template<typename T>
+    float getRandomFloat2f(const T& min, const T& max) {
         std::uniform_real_distribution<float> dist(min, max);
-        
-        float result = std::round(dist(gen) *100.0f) * INV_100;
-        return result;
+        return std::round(dist(gen) * 100.0f) * INV_100;
+    }
+    /**
+     * @brief genarate random number in presition 0.0001
+     * @param min mininum random can be
+     * @param max maxinum random can be
+     * @return double that completely random
+     */
+    template<typename T>
+    float getRandomFloat4f(const T& min, const T& max) {
+        std::uniform_real_distribution<float> dist(min, max);
+        return std::round(dist(gen) * 10000.0) * INV_10000;
     }
     /**
      * @brief genarate random number in double
@@ -41,40 +52,30 @@ namespace random
      * @param max maxinum random can be
      * @return double that completely random
      */
-    double getRandomDouble(const double& min, const double& max) {
+    template<typename T>
+    double getRandomDouble(const T& min, const T& max) {
         std::uniform_real_distribution<double> dist(min, max);
-        
-        double result = std::round(dist(gen) *10000.0) * INV_10000;
-        return result;
+        return dist(gen);
     }
     /**
      * @brief genarate random true or false with sucessrate
      * @param successRatePercent sucessrate in 0.01-100.0%
      * @return result of random
      */
-    bool randomSuscess(const float& successRatePercent) {
+    template<typename T>
+    bool randomSuscess(const T& successRatePercent) {
         return dist_percent(gen) <= successRatePercent;
     }
     /**
-     * @brief genarate random true or false with sucessrate in int number
-     * @param successRatePercent sucessrate in 0-100%
+     * @brief genarate random true or false with sucessrate
+     * @param successRatePercent sucessrate in min - max
      * @param min mininum int in random range
      * @param max maxinum int in random range
      * @return result of random
      */
-    bool randomSuscess(const float& successRatePercent,const uint8_t& min,const uint8_t& max) {
-        float roll = getRandomFloat(min, max);
-        return roll <= successRatePercent;
-    }
-    /**
-     * @brief genarate random true or false with sucessrate in float number
-     * @param successRatePercent sucessrate in any number
-     * @param min mininum float in random range
-     * @param max maxinum float in random range
-     * @return result of random
-     */
-    bool randomSuscess(const float& successRatePercent,float& min, float& max) {
-        float roll = getRandomFloat(min, max);
+    template<typename T1, typename T2> 
+    bool randomSuscess(const T1& successRatePercent,const T2& min,const T2& max) {
+        float roll = getRandomFloat2f(min, max);
         return roll <= successRatePercent;
     }
 } // namespace rd
@@ -89,7 +90,7 @@ namespace function
      */
     float computeY(float x, float control) {
         if (x == 0) { return 0; }
-        return (100.0 * x) / (x + control);
+        return (100.0f * x) / (x + control);
     }
     /**
      * @brief claculate computeY number that not larger than maxinum value

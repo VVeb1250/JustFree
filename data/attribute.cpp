@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <cmath>
 #include "../util/calculate.cpp"
+#include <iostream>
 
 namespace attribute
 {
@@ -13,6 +14,9 @@ namespace attribute
     // Pre-calculate constant divisions
     constexpr float INV_100 = 1.0f / 100.0f; // round to 0.01 
     constexpr float INV_10000 = 1.0f / 10000.0f; // round to 0.0001
+    constexpr float f_10 = 10.0f;
+    constexpr float f_100 = 100.0f;
+    constexpr float f_10000 = 10000.0f;
 
     /**
     * @param HP
@@ -247,13 +251,13 @@ namespace attribute
         // caluculate reduce damage from computeY(DEF, FIX_HALF_DEF+AP)
         template<typename T>
         float __cal_reducedamage(const T& AP, const T& DEF) {
-            return (std::round(function::computeY(DEF, FIX_HALF_DEF + AP) * 10000.0f)) * INV_10000;
+            return (std::round(function::computeY(DEF, FIX_HALF_DEF + AP) * f_10000)) * INV_10000;
         }
         // complete defense calcilator
         template<typename R, typename T>
         R cal_defense(R DMG, const T& AP, const T& DEF) {
             reduceDamage = __cal_reducedamage(AP, DEF);
-            multiplyer = (100.0f - reduceDamage) * INV_100;
+            multiplyer = (f_100 - reduceDamage) * INV_100;
             return multiplyer * DMG;
         }
         /**
@@ -264,7 +268,7 @@ namespace attribute
         template<typename T>
         void update_value(const T& AP, const T& DEF) {
             reduceDamage = __cal_reducedamage(AP, DEF);
-            multiplyer = (100.0f - reduceDamage) * INV_100;
+            multiplyer = (f_100 - reduceDamage) * INV_100;
         }
     }
     /**
@@ -278,6 +282,7 @@ namespace attribute
         static float multiplyer = NAN; 
         static float reduceDamage = NAN; 
         static float chanceDodge = NAN; 
+        constexpr float EVA_multiply = 1.5f; // make acc less effect for balance
         // mininum damage reduce and maxinum damage recive if can dodge in percent  
         constexpr uint_fast16_t FIX_HALF_DODGE = 100; // stat in 50%
         constexpr uint_fast8_t MIN_reducedamage = 45; // in percent
@@ -287,9 +292,10 @@ namespace attribute
         // calculate possible dodge from ACC / EVA
         template<typename T>
         float __cal_possibleDodge(const T& ACC, const T& EVA) {
-            if (ACC >= EVA) { return 0; }
-            float temp = std::round(static_cast<float>(ACC) * 10000.0f / EVA) * INV_100;
-            return 100.0f - (temp + (std::round(function::computeY(100.0f-temp, FIX_HALF_DODGE, EVA) * 100.0f) * INV_100));
+            float new_EVA = EVA * EVA_multiply;
+            if (ACC >= new_EVA) { return 0.0f; }
+            float temp = std::round(static_cast<float>(ACC) * f_10000 / new_EVA) * INV_100;
+            return f_100 - (temp + (std::round(function::computeY(f_100-temp, FIX_HALF_DODGE, new_EVA) * f_100) * INV_100));
         }
         // call randomSuscess to return canDodge or not
         bool __cal_canDodge(float possibleDodge) {
@@ -302,11 +308,11 @@ namespace attribute
          * @return total damage reduce in percent
          */
         float __cal_reducedamage(float possibleDodge) {
-            multiplyer = (((100.0f - possibleDodge) - MIN_reducedamage) * INV_100);
+            multiplyer = (((f_100 - possibleDodge) - MIN_reducedamage) * INV_100);
             multiplyer = multiplyer + function::computeY(
-                possibleDodge / ((100.0f / (MAX_reducedamage + MIN_reducedamage)) * 100.0f), possibleDodge, multiplyer
+                possibleDodge / ((f_100 / (MAX_reducedamage + MIN_reducedamage)) * f_100), possibleDodge, multiplyer
             );
-            return std::round((100.0f - (multiplyer * 100.0f)) * 10000.0f) * INV_10000;
+            return std::round((f_100 - (multiplyer * f_100)) * f_10000) * INV_10000;
         }
         /**
          * @brief complete dodge damage calculator
@@ -330,9 +336,9 @@ namespace attribute
         void update_value(const T& ACC, const T& EVA) {
             chanceDodge = __cal_possibleDodge(ACC, EVA);
             reduceDamage =  __cal_reducedamage(chanceDodge);
-            multiplyer = (((100.0f - chanceDodge) - MIN_reducedamage) * INV_100);
+            multiplyer = (((f_100 - chanceDodge) - MIN_reducedamage) * INV_100);
             multiplyer = multiplyer + function::computeY(
-                chanceDodge / ((100.0f / (MAX_reducedamage + MIN_reducedamage)) * 100.0f), chanceDodge, multiplyer
+                chanceDodge / ((f_100 / (MAX_reducedamage + MIN_reducedamage)) * f_100), chanceDodge, multiplyer
             );
         }
         /**
@@ -350,7 +356,9 @@ namespace attribute
     namespace crit {
         static float multiplyer = NAN;
         static float critRate = NAN;
-        constexpr float FIX_LOWEST_EQUAL = 2.5f; // mininum multiplyer if CDMG and CDEF is equal
+        constexpr float FIX_LOWEST_CDMG = 1.5f; // mininum multiplyer if it crit
+        constexpr float FIX_LOWEST_EQUAL = 2.0f; // mininum multiplyer if CDMG and CDEF is equal
+        constexpr float cal_LOWEST_CDMG = FIX_LOWEST_CDMG - 1.0f;
         constexpr uint_fast16_t FIX_CR_HALF = 500; // stat of cr to make 50% crit
         static bool isCrit = NAN;
 
@@ -360,7 +368,7 @@ namespace attribute
          */
         template<typename T>
         float __cal_possibleCrit(const T& CR, const T& CDEF) {
-            return std::round(function::computeY(CR, FIX_CR_HALF) * 100.0f) * INV_100; // + (static_cast<float>(CDEF) / 4)
+            return std::round(function::computeY(CR, FIX_CR_HALF) * f_100) * INV_100; // + (static_cast<float>(CDEF) / 4)
         }
         // call randomSuscess to return canCrit or not
         bool __cal_canCrit(const float& possibleCrit) {
@@ -373,14 +381,14 @@ namespace attribute
          */
         template<typename R, typename T>
         R __cal_criticaldamage(R DMG, const T& CDMG, const T& CDEF) {
-            if (CDMG == 0) { multiplyer = 1.5; return DMG; }
+            if (CDMG == 0) { multiplyer = FIX_LOWEST_CDMG; return DMG; }
             if (CDEF == 0) {
-                multiplyer = (std::round((CDMG + 100.0f) * 100.0f) * INV_10000) + 1.5f;
+                multiplyer = (std::round((CDMG + f_100) * f_100) * INV_10000) + cal_LOWEST_CDMG;
                 return std::round(multiplyer * DMG);
             }
             // old : use half_param = CDMG, but crit landing high damage even have high CDEF
-            float half_param = (CDMG * (FIX_LOWEST_EQUAL - 1.0f) * 100.0f) / CDEF; // number is maxium equal case
-            multiplyer = (std::round((static_cast<float>(CDMG) - (function::computeY(CDMG, CDEF, half_param)) + 100.0f) * 100.0f) * INV_10000) + 0.5f;
+            float half_param = (CDMG * (FIX_LOWEST_EQUAL - FIX_LOWEST_CDMG) * f_100) / CDEF; // number is maxium equal case
+            multiplyer = (std::round((static_cast<float>(CDMG) - (function::computeY(CDMG, CDEF, half_param)) + f_100) * f_100) * INV_10000) + cal_LOWEST_CDMG;
             return std::round(multiplyer * DMG);
         }
         // complete crit damage calculator 
@@ -400,11 +408,11 @@ namespace attribute
         template<typename T>
         void update_value(const T& CR, const T& CDMG, const T& CDEF) {
             critRate = __cal_possibleCrit(CR, CDEF);
-            if (CDMG == 0) { multiplyer = 1.5f; }
-            else if (CDEF == 0) { multiplyer = (std::round((CDMG + 100.0f) * 100.0f) * INV_10000) + 0.5f; }
+            if (CDMG == 0) { multiplyer = FIX_LOWEST_CDMG; }
+            else if (CDEF == 0) { multiplyer = (std::round((CDMG + f_100) * f_100) * INV_10000) + cal_LOWEST_CDMG; }
             else {
-                float half_param = (CDMG * (FIX_LOWEST_EQUAL - 1) * 100.0f) / CDEF; // number is maxium equal case
-                multiplyer = (std::round((static_cast<float>(CDMG) - (function::computeY(CDMG, CDEF, half_param)) + 100.0f) * 100.0f) * INV_10000) + 0.5f;
+                float half_param = (CDMG * (FIX_LOWEST_EQUAL - FIX_LOWEST_CDMG) * f_100) / CDEF; // number is maxium equal case
+                multiplyer = (std::round((static_cast<float>(CDMG) - (function::computeY(CDMG, CDEF, half_param)) + f_100) * f_100) * INV_10000) + cal_LOWEST_CDMG;
             }
         }
         /**
@@ -464,4 +472,17 @@ namespace attribute
         }
     }
     
+    namespace speed {
+        // max ~65000
+        constexpr uint16_t FIX_HALF_SPD = 5000; // stat of spd that make 50%
+        template <typename T>
+        uint_fast16_t __cal_speed(const T& SPD) {
+            float x = function::computeY(SPD, FIX_HALF_SPD);
+            int y = 1000 - std::round(x * f_10);
+            std::cout << SPD << " ";
+            std::cout << x << " ";
+            std::cout << y << endl;
+            return y;
+        }
+    }
 }
