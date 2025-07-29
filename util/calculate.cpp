@@ -1,17 +1,26 @@
+#pragma once
 #include <cstdint>
 #include <random>
 #include <chrono>
 
+namespace constants 
+{
+    // Pre-calculate
+    constexpr float INV_100 = 1.0f / 100.0f; // round to 0.01 
+    constexpr float INV_10000 = 1.0f / 10000.0f; // round to 0.0001
+    constexpr float f_10 = 10.0f;
+    constexpr float f_100 = 100.0f;
+    constexpr float f_10000 = 10000.0f;
+}
 namespace random
 {
-    constexpr float INV_100 = 1.0/100.0;
-    constexpr float INV_10000 = 1.0/10000.0;
+    using namespace constants;
     // static generator
     static std::random_device rd;
     static std::mt19937 gen(rd());
     static auto time_seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     // Static distributions for common ranges
-    static std::uniform_real_distribution<float> dist_percent(0.01f, 100.0f);
+    static std::uniform_real_distribution<float> dist_percent(INV_100, f_100);
 
     /**
      * @brief genarate random number in int
@@ -33,7 +42,7 @@ namespace random
     template<typename T>
     float getRandomFloat2f(const T& min, const T& max) {
         std::uniform_real_distribution<float> dist(min, max);
-        return std::round(dist(gen) * 100.0f) * INV_100;
+        return std::round(dist(gen) * f_100) * INV_100;
     }
     /**
      * @brief genarate random number in presition 0.0001
@@ -44,7 +53,7 @@ namespace random
     template<typename T>
     float getRandomFloat4f(const T& min, const T& max) {
         std::uniform_real_distribution<float> dist(min, max);
-        return std::round(dist(gen) * 10000.0) * INV_10000;
+        return std::round(dist(gen) * f_10000) * INV_10000;
     }
     /**
      * @brief genarate random number in double
@@ -82,6 +91,7 @@ namespace random
 
 namespace function
 {
+    using namespace constants;
     /**
      * @brief claculate computeY number that not larger than 100
      * @param x input value
@@ -90,7 +100,7 @@ namespace function
      */
     float computeY(float x, float control) {
         if (x == 0) { return 0; }
-        return (100.0f * x) / (x + control);
+        return (f_100 * x) / (x + control);
     }
     /**
      * @brief claculate computeY number that not larger than maxinum value
