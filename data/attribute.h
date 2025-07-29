@@ -1,10 +1,8 @@
-// Example header file structure
-// filepath: d:\Practice\GameWithCpp\include\attribute.h
-
+#pragma once
 #include <iostream>
 #include <cstdint>
 #include <cmath>
-#include "../util/calculate.cpp"
+#include "../util/calculate.h"
 
 namespace attribute
 {

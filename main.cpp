@@ -1,5 +1,5 @@
-#include "data\attribute.cpp"
-#include "data\combat.cpp"
+#include "data\attribute.h"
+#include "data\combat.h"
 #include <algorithm>
 #include <iostream>
 
@@ -7,7 +7,7 @@
 #define randomHP doRandom * random::getRandomFloat4f(10, 50)
 #define randomATK doRandom * random::getRandomFloat4f(1, 5)
 
-
+DamageCalculator damage;
 
 int main() {
     system("cls");
@@ -15,7 +15,6 @@ int main() {
     int base = 0;
     int floor = 1000;
     using namespace attribute;
-    using namespace combat;
     using namespace std;
 
     vector<uint32_t> array(8);
@@ -60,14 +59,14 @@ int main() {
             playerTurn = false;
             enemyTurn = true;
             // next plan make this write shorter
-            cout << player.name << " Dealt : " << DamageCalculator::attack<uint32_t>(player, enemy) << (DodgeCalculator::getcanDodge() ? " --dodge" : "        ") << (CritCalculator::getisCrit() ? " crit!!" : "       ") << "           .. ";
+            cout << player.name << " Dealt : " << damage.attack<uint32_t>(player, enemy) << (damage.dodge.isDodge() ? " --dodge" : "        ") << (damage.crit.isCrit() ? " crit!!" : "       ") << "           .. ";
             cout << enemy.name << "  : " << enemy.getFinalHP() << "/" << enemy.getFinalMAX_HP() << " [" << static_cast<float>((enemy.getFinalHP()) * 100) / enemy.getFinalMAX_HP() << "%]" << endl;
             continue;
         }
         if (enemyTurn) {
             playerTurn = true;
             enemyTurn = false;
-            cout << enemy.name << " Dealt  : " << DamageCalculator::attack<uint32_t>(enemy, player) << (DodgeCalculator::getcanDodge() ? " --dodge" : "        ") << (CritCalculator::getisCrit() ? " crit!!" : "       ") << "           ,, ";
+            cout << enemy.name << " Dealt  : " << damage.attack<uint32_t>(enemy, player) << (damage.dodge.isDodge() ? " --dodge" : "        ") << (damage.crit.isCrit() ? " crit!!" : "       ") << "           ,, ";
             cout << player.name << " : " << player.getFinalHP() << "/" << player.getFinalMAX_HP() << " [" << static_cast<float>((player.getFinalHP()) * 100) / player.getFinalMAX_HP() << "%]" << endl;
             continue;
         }

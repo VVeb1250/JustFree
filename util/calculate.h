@@ -6,11 +6,12 @@
 namespace constants 
 {
     // Pre-calculate
-    constexpr float INV_100 = 1.0f / 100.0f; // round to 0.01 
-    constexpr float INV_10000 = 1.0f / 10000.0f; // round to 0.0001
-    constexpr float f_10 = 10.0f;
-    constexpr float f_100 = 100.0f;
-    constexpr float f_10000 = 10000.0f;
+    constexpr float INV_100 = 1.0f / 100.0f; // round to 0.01 (10^-2)
+    constexpr float INV_10000 = 1.0f / 10000.0f; // round to 0.0001 (10^-4)
+    constexpr float INV_1000000 = 1.0f / 1000000.0f; // round to 0.000001 (10^-6)
+    constexpr float f_10 = 10.0f; // 10^1
+    constexpr float f_100 = 100.0f; // 10^2
+    constexpr float f_10000 = 10000.0f; // 10^4
 }
 namespace random
 {
