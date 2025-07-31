@@ -1,18 +1,18 @@
 #pragma once
-#include "../../util/calculate.h"
+#include "..\..\util\calculate.h"
 
 using namespace constants;
 /**
  * @brief using CR, CDMG, CDEF 
  * @param critRate in %
- * @param isCrit true or false
+ * @param _isCrit true or false
  * @param multiplier lowest x1, highest x655.35
  */
 class CritCalculator {
 private:
     float multiplier;
     float critRate;
-    bool isCrit;
+    bool _isCrit;
 
     static constexpr float FIX_LOWEST_CDMG = 1.5f; // mininum multiplier if it crit
     static constexpr float FIX_LOWEST_EQUAL = 2.0f; // mininum multiplier if CDMG and CDEF is equal
@@ -24,9 +24,9 @@ public:
     // getter
     inline float getmultiplier() { return multiplier ; }
     inline float getcritRate() { return critRate ; }
-    inline bool isCrit() { return isCrit ; }
+    inline bool isCrit() { return _isCrit ; }
     //reset crit paramiter
-    inline void resetIsCrit() { isCrit = false; }
+    inline void resetIsCrit() { _isCrit = false; }
 
     // calculate possibleCrit from computeY(CR, FIX_CR_HALF+(CDEF/4))
     template<typename T>
@@ -39,7 +39,7 @@ public:
     }
     // calculate damage and multiplier from CDMG and can take lower from CDEF
     template<typename R, typename T>
-    R __cal_criticaldamage(R DMG, const T& CDMG, const T& CDEF) {
+    R __cal_criticaldamage(const R& DMG, const T& CDMG, const T& CDEF) {
         if (CDMG == 0) { multiplier = FIX_LOWEST_CDMG; return DMG; }
         if (CDEF == 0) {
             multiplier = (std::round((CDMG + f_100) * f_100) * INV_10000) + cal_LOWEST_CDMG;
@@ -52,10 +52,10 @@ public:
     }
     // complete crit damage calculator 
     template<typename R, typename T>
-    R apply(R DMG, const T& CR, const T& CDMG, const T& CDEF) {
+    R apply(const R& DMG, const T& CR, const T& CDMG, const T& CDEF) {
         critRate = __cal_possibleCrit(CR, CDEF);
-        isCrit = __cal_canCrit(critRate);
-        if (isCrit) { return __cal_criticaldamage(DMG, CDMG, CDEF); } 
+        _isCrit = __cal_canCrit(critRate);
+        if (_isCrit) { return __cal_criticaldamage(DMG, CDMG, CDEF); } 
         else { return DMG; }
     }
     /**

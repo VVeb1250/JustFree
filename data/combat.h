@@ -1,6 +1,6 @@
 #pragma once
 
-#include "crit_calculator.h"
-#include "damage_calculator.h"
-#include "defense_calculator.h"
-#include "dodge_calculator.h"
+#include "combat\crit_calculator.h"
+#include "combat\damage_calculator.h"
+#include "combat\defense_calculator.h"
+#include "combat\dodge_calculator.h"

@@ -13,7 +13,7 @@ int main() {
     system("cls");
 
     int base = 0;
-    int floor = 1000;
+    int floor = 50000;
     using namespace attribute;
     using namespace std;
 
@@ -52,30 +52,47 @@ int main() {
 
     bool playerTurn = true;
     bool enemyTurn = false;
-    uint32_t turn = 0;
+    uint64_t min_pdmg = UINT64_MAX;
+    uint64_t max_pdmg = 0;
+    uint64_t min_edmg = UINT64_MAX;
+    uint64_t max_edmg = 0;
+    uint64_t turn = 0;
     while (player.getFinalHP() > 0 && enemy.getFinalHP() > 0) {
         cout << "turn - " << ++turn << endl;
         if (playerTurn) {
             playerTurn = false;
             enemyTurn = true;
             // next plan make this write shorter
-            cout << player.name << " Dealt : " << damage.attack<uint32_t>(player, enemy) << (damage.dodge.isDodge() ? " --dodge" : "        ") << (damage.crit.isCrit() ? " crit!!" : "       ") << "           .. ";
-            cout << enemy.name << "  : " << enemy.getFinalHP() << "/" << enemy.getFinalMAX_HP() << " [" << static_cast<float>((enemy.getFinalHP()) * 100) / enemy.getFinalMAX_HP() << "%]" << endl;
+            cout << player.name << " Dealt : " << damage.attack<uint32_t>(player, enemy) << 
+            (damage.dodge.isDodge() ? " --dodge" : "        ") << (damage.crit.isCrit() ? " crit!!" : "       ") << "           .. ";
+            cout << enemy.name << "  : " << enemy.getFinalHP() << "/" << enemy.getFinalMAX_HP() << " [" 
+            << static_cast<float>((enemy.getFinalHP()) * 100) / enemy.getFinalMAX_HP() << "%]" << endl;
+            min_pdmg = min(min_pdmg, damage.getDMG());
+            max_pdmg = max(max_pdmg, damage.getDMG());
             continue;
         }
         if (enemyTurn) {
             playerTurn = true;
             enemyTurn = false;
-            cout << enemy.name << " Dealt  : " << damage.attack<uint32_t>(enemy, player) << (damage.dodge.isDodge() ? " --dodge" : "        ") << (damage.crit.isCrit() ? " crit!!" : "       ") << "           ,, ";
-            cout << player.name << " : " << player.getFinalHP() << "/" << player.getFinalMAX_HP() << " [" << static_cast<float>((player.getFinalHP()) * 100) / player.getFinalMAX_HP() << "%]" << endl;
+            cout << enemy.name << " Dealt  : " << damage.attack<uint32_t>(enemy, player) << 
+            (damage.dodge.isDodge() ? " --dodge" : "        ") << (damage.crit.isCrit() ? " crit!!" : "       ") << "           ,, ";
+            cout << player.name << " : " << player.getFinalHP() << "/" << player.getFinalMAX_HP() << 
+            " [" << static_cast<float>((player.getFinalHP()) * 100) / player.getFinalMAX_HP() << "%]" << endl;
+            min_edmg = min(min_edmg, damage.getDMG());
+            max_edmg = max(max_edmg, damage.getDMG());
             continue;
         }
     }
+    cout << endl;
+
+    cout << player.name << " -- min : " << ((min_pdmg == UINT64_MAX) ? 0 : min_pdmg) << ", max : " << max_pdmg << endl;
+    cout << enemy.name << " -- min : " << ((min_edmg == UINT64_MAX) ? 0 : min_edmg) << ", max : " << max_edmg << endl;
+
     if (player.getFinalHP() > 0) {
-        cout << endl << player.name << " win" << endl;
+        cout << player.name << " win" << endl;
     }
     if (enemy.getFinalHP() > 0) {
-        cout << endl << enemy.name << " win" << endl;
+        cout << enemy.name << " win" << endl;
     }
     // int max = 50000;
     // int amount = 25;

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../util/calculate.h"
+#include "..\..\util\calculate.h"
 
 using namespace constants;
 /**
@@ -32,7 +32,7 @@ public:
     }
     // complete defense calculator
     template<typename R, typename T>
-    R apply(R DMG, const T& AP, const T& DEF) {
+    R apply(const R& DMG, const T& AP, const T& DEF) {
         reduceDamage = __cal_reducedamage(AP, DEF);
         multiplier = __cal_multiplier(reduceDamage);
         return std::round(multiplier * DMG);

@@ -1,5 +1,5 @@
 #pragma once
-#include "../../util/calculate.h"
+#include "..\..\util\calculate.h"
 
 using namespace constants;
 /**
@@ -50,17 +50,17 @@ public:
         return multiplier;
     }
     // call randomSuscess to return canDodge or not
-    bool __cal_canDodge(float& possibleDodge) {
+    bool __cal_canDodge(const float& possibleDodge) {
         return random::randomSuscess(possibleDodge);
     }
     // calculate reducedamage from possibleDodge and have damage floor
-    float __cal_reducedamage(float possibleDodge) {
+    float __cal_reducedamage(const float& possibleDodge) {
         multiplier = __cal_multiplier(multiplier, possibleDodge);
         return std::round((f_100 - (multiplier * f_100)) * f_10000) * INV_10000;
     }
     // complete dodge damage calculator
     template<typename R, typename T>
-    R apply(R DMG, const T& ACC, const T& EVA) {
+    R apply(const R& DMG, const T& ACC, const T& EVA) {
         chanceDodge = __cal_possibleDodge(ACC, EVA);
         canDodge = __cal_canDodge(chanceDodge);
         if (canDodge) {
