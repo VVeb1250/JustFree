@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <random>
 #include <chrono>
+#include "validator.h"
 
 namespace constants 
 {

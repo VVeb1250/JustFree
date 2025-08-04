@@ -31,7 +31,8 @@ public:
     // calculate possibleCrit from computeY(CR, FIX_CR_HALF+(CDEF/4))
     template<typename T>
     float __cal_possibleCrit(const T& CR, const T& CDEF) {
-        return std::round(function::computeY(CR, FIX_CR_HALF) * f_100) * INV_100; // + (static_cast<float>(CDEF) / 4)
+        return std::round(function::computeY(CR, FIX_CR_HALF + (CDEF >> 1)) * f_100) * INV_100; // + (static_cast<float>(CDEF) / 4)
+        return CR * INV_100;
     }
     // call randomSuscess to return canCrit or not
     bool __cal_canCrit(const float& possibleCrit) {

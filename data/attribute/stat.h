@@ -24,6 +24,9 @@ namespace attribute {
             uint16_t cr, uint16_t cdmg, uint16_t cdef)
             : basic_stat_attribute(hp, atk, ap, def, acc, eva, cr, cdmg, cdef), name(name) { }
     
+        char getFirstName() {
+            return name.at(0);
+        }
         void toString() {
             cout << name << " ;; ";
             basic_stat_attribute::toString();
