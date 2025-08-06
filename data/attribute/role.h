@@ -1,5 +1,16 @@
 #pragma once
 
+// low tier : vanguard,tank,mage
+// mid tier : knight,archer,striker,crusader
+// top tier : assassin,rook,bishop
+// god tier : grandmaster,queen,king
+
+// max 8 pawn
+// god tier - 1
+// top tier - 1
+// mid tier - 2
+// low tier - 4 
+
 enum class role {
     vanguard, // around 1 range 
     /*
@@ -11,12 +22,12 @@ enum class role {
     - - - - - - -
     - - - - - - -
     */
-    pladin, // plus 1 range
+    tank, // plus 1 range
     /*
     - - - - - - -
     - - - - - - -
     - - - * - - -
-    - - * P * - -
+    - - * T * - -
     - - - * - - -
     - - - - - - -
     - - - - - - -
