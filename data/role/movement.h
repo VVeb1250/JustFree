@@ -1,7 +1,7 @@
 #pragma once
 #include "role.h"
 
-class role {
+class role_movement {
 private:
     static const bool vanguard_pattern[7][7];
     static const bool tank_pattern[7][7];
@@ -21,8 +21,8 @@ public:
     
 };
 
-// --- Patterns ---
-const bool role::vanguard_pattern[7][7] = {
+// --- Patterns --- //
+const bool role_movement::vanguard_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0},
     {0,0,1,1,1,0,0},
@@ -31,7 +31,7 @@ const bool role::vanguard_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::tank_pattern[7][7] = {
+const bool role_movement::tank_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0},
     {0,0,0,1,0,0,0},
@@ -40,7 +40,7 @@ const bool role::tank_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::mage_pattern[7][7] = {
+const bool role_movement::mage_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0},
     {0,0,1,0,1,0,0},
@@ -49,7 +49,7 @@ const bool role::mage_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::knight_pattern[7][7] = {
+const bool role_movement::knight_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,1,0,1,0,0},
     {0,1,0,0,0,1,0},
@@ -58,7 +58,7 @@ const bool role::knight_pattern[7][7] = {
     {0,0,1,0,1,0,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::archer_pattern[7][7] = {
+const bool role_movement::archer_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,1,0,1,0,1,0},
     {0,0,0,0,0,0,0},
@@ -67,7 +67,7 @@ const bool role::archer_pattern[7][7] = {
     {0,1,0,1,0,1,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::striker_pattern[7][7] = {
+const bool role_movement::striker_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,1,0,0,0},
     {0,0,1,0,1,0,0},
@@ -76,7 +76,7 @@ const bool role::striker_pattern[7][7] = {
     {0,0,0,1,0,0,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::crusader_pattern[7][7] = {
+const bool role_movement::crusader_pattern[7][7] = {
     {0,0,0,1,0,0,0},
     {0,0,0,1,0,0,0},
     {0,0,0,1,0,0,0},
@@ -85,7 +85,7 @@ const bool role::crusader_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::assassin_pattern[7][7] = {
+const bool role_movement::assassin_pattern[7][7] = {
     {0,0,0,0,0,0,0},
     {0,0,1,0,1,0,0},
     {1,0,0,0,0,0,1},
@@ -94,7 +94,7 @@ const bool role::assassin_pattern[7][7] = {
     {0,0,0,1,0,0,0},
     {0,0,0,0,0,0,0},
 };
-const bool role::rook_pattern[7][7] = {
+const bool role_movement::rook_pattern[7][7] = {
     {0,0,0,1,0,0,0},
     {0,0,0,1,0,0,0},
     {0,0,0,1,0,0,0},
@@ -103,7 +103,7 @@ const bool role::rook_pattern[7][7] = {
     {0,0,0,1,0,0,0},
     {0,0,0,1,0,0,0},
 };
-const bool role::bishop_pattern[7][7] = {
+const bool role_movement::bishop_pattern[7][7] = {
     {1,0,0,0,0,0,1},
     {0,1,0,0,0,1,0},
     {0,0,1,0,1,0,0},
@@ -112,7 +112,7 @@ const bool role::bishop_pattern[7][7] = {
     {0,1,0,0,0,1,0},
     {1,0,0,0,0,0,1},
 };
-const bool role::grandmaster_pattern[7][7] = {
+const bool role_movement::grandmaster_pattern[7][7] = {
     {0,0,0,1,0,0,0},
     {0,1,0,0,0,1,0},
     {0,0,1,0,1,0,0},
@@ -121,7 +121,7 @@ const bool role::grandmaster_pattern[7][7] = {
     {0,1,0,0,0,1,0},
     {0,0,0,1,0,0,0},
 };
-const bool role::queen_pattern[7][7] = {
+const bool role_movement::queen_pattern[7][7] = {
     {0,0,0,1,0,0,0},
     {0,1,0,0,0,1,0},
     {0,0,0,1,0,0,0},
@@ -130,7 +130,7 @@ const bool role::queen_pattern[7][7] = {
     {0,1,0,0,0,1,0},
     {0,0,0,1,0,0,0},
 };
-const bool role::king_pattern[7][7] = {
+const bool role_movement::king_pattern[7][7] = {
     {0,0,1,0,1,0,0},
     {0,0,0,1,0,0,0},
     {1,0,1,0,1,0,1},

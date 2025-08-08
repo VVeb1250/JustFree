@@ -7,6 +7,13 @@
 
 using namespace std;
 
+struct board_position
+{
+    int x, y;
+    
+    board_position(int x, int y) : x(x), y(y) {  }
+};
+
 template <typename T>
 class Board
 {
@@ -45,8 +52,11 @@ public:
         validator::non_negative("y", y, sent_location);
         validator::morethan(width, "width", x - 1, sent_location);
         validator::morethan(height, "height", y - 1, sent_location);
-        if (items[x][y] == nullptr) { items[x][y] = &obj; } 
-        else { cout << "[warning]" << obj.name << ": this position already has " << items[x][y]->name <<", use " << items[x][y]->name << " instead." << endl; }
+        if (items[x][y] == nullptr) { items[x][y] = &obj; }
+        else {
+            items[x][y] = &obj;
+            cout << "[warning]" << obj.name << ": this position already has " << items[x][y]->name <<", use " << obj.name << " instead." << endl;
+        }
     }
     void tostring() {
         string width_space = spacing_width(width_digits);
@@ -64,7 +74,8 @@ public:
             cout << spacing_width(width_digits - raw_log(y)) << y << " ";
             // print inside data
             for (int x = 0; x < height; x++) {
-                cout << "| ";
+                cout << "|";
+                cout << " ";
                 if (items[x][y] == nullptr) { cout << " "; } 
                 else { cout << items[x][y]->getFirstName(); }
                 cout << " ";
@@ -74,9 +85,6 @@ public:
         print_width_Board();
     }
 };
-
-#undef entity
-#undef position
 
 //   
 // + - + - +

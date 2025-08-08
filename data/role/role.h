@@ -11,6 +11,12 @@
 // mid tier - 2
 // low tier - 4 
 
+// max 16 pawn
+// god tier - 2
+// top tier - 2
+// mid tier - 4
+// low tier - 8 
+
 enum class role {
     vanguard, // around 1 range 
     /*
