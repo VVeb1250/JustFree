@@ -160,3 +160,27 @@ enum class role {
 - - - - - - -
 - - - - - - -
 */
+
+#include <unordered_map>
+
+namespace role_data {
+    static const std::string getRoleName(role _role) {
+        static std::unordered_map<role, std::string> cache;
+        if (cache.empty()) {
+            cache[role::vanguard] = "vanguard";
+            cache[role::tank] = "tank";
+            cache[role::mage] = "mage";
+            cache[role::knight] = "knight";
+            cache[role::archer] = "archer";
+            cache[role::striker] = "striker";
+            cache[role::crusader] = "crusader";
+            cache[role::assassin] = "assassin";
+            cache[role::rook] = "rook";
+            cache[role::bishop] = "bishop";
+            cache[role::grandmaster] = "grandmaster";
+            cache[role::queen] = "queen";
+            cache[role::king] = "king";
+        }
+        return cache.at(_role);
+    }
+}

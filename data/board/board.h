@@ -3,22 +3,25 @@
 #include <vector>
 #include <optional>
 #include <iostream>
+#include <algorithm>
+#include "position.h"
 #include "..\..\util\validator.h"
 
-using namespace std;
+// Forward declarations
+template<typename T> class MovementPattern;
+template<typename T> class role_movement;
 
-struct board_position
-{
-    int x, y;
-    
-    board_position(int x, int y) : x(x), y(y) {  }
-};
+#include "..\role\movement.h"
+#include "..\role\pattern_factory.h"
+
+using namespace std;
 
 template <typename T>
 class Board
 {
 private:
     vector<vector<T*>> items;
+    vector<pair<T*, board_position>> items_position;
     int width_digits;
     int width;
     int height;
@@ -47,16 +50,52 @@ public:
         validator::morethan(26, "height", heights, sent_location);
     }
     
+    bool isWithinBounds(int x, int y) const {
+        return x >= 0 && x < width && y >= 0 && y < height;
+    }
+    bool hasObstacle(int x, int y) const {
+        return items[x][y] != nullptr;
+    }
     void add(T& obj, int x, int y, default_location) {
         validator::non_negative("x", x, sent_location);
         validator::non_negative("y", y, sent_location);
         validator::morethan(width, "width", x - 1, sent_location);
         validator::morethan(height, "height", y - 1, sent_location);
-        if (items[x][y] == nullptr) { items[x][y] = &obj; }
-        else {
+        if (items[x][y] == nullptr) { 
             items[x][y] = &obj;
-            cout << "[warning]" << obj.name << ": this position already has " << items[x][y]->name <<", use " << obj.name << " instead." << endl;
+            items_position.push_back({&obj, board_position(x,y)});
         }
+        else {
+            T* oldItem = items[x][y];
+            cout << "[warning]" << obj.name << ": this position already has " << items[x][y]->name <<", use " << obj.name << " instead." << endl;
+            // Find and remove old item from items_position
+            auto it = std::find_if(items_position.begin(), items_position.end(),
+                [oldItem](const auto& pair) { return pair.first == oldItem; });
+        
+            if (it != items_position.end()) {
+                items_position.erase(it);
+            }
+            items[x][y] = &obj;
+            items_position.push_back({&obj, board_position(x,y)});
+        }
+    }
+    vector<board_position> getMoves(T& obj) const {
+        for (const pair<T*, board_position>& check : items_position) {
+            if (check.first == &obj) {  // Compare addresses since we store pointers
+                const MovementPattern<T>& pattern = role_movement<T>::get(check.first->getRole());
+                return pattern.getPossibleMoves(*this, check.second.x, check.second.y);
+            }
+        }
+        return { board_position() };  // Return empty position if not found
+    }
+    vector<board_position> getAllMoves(T& obj) const {
+        for (const pair<T*, board_position>& check : items_position) {
+            if (check.first == &obj) {  // Compare addresses since we store pointers
+                const MovementPattern<T>& pattern = role_movement<T>::get(check.first->getRole());
+                return pattern.getAllPossibleMoves(*this, check.second.x, check.second.y);
+            }
+        }
+        return { board_position() };  // Return empty position if not found
     }
     void tostring() {
         string width_space = spacing_width(width_digits);
@@ -67,6 +106,9 @@ public:
             cout << "   " << static_cast<char>('A' + i) ;
         } cout << endl;
 
+        // gets move able data
+        vector<board_position> moveable = getAllMoves(*items_position.at(0).first);
+
         // print Board
         for (int y = 0; y < width; y++) {
             cout << width_space << " ";
@@ -74,11 +116,25 @@ public:
             cout << spacing_width(width_digits - raw_log(y)) << y << " ";
             // print inside data
             for (int x = 0; x < height; x++) {
+                // check is can move to that grid first
+                bool canMove = false;
+                for (board_position check : moveable) {
+                    if (x == check.x && y == check.y) {
+                        canMove = true;
+                        break;
+                    }
+                }
                 cout << "|";
-                cout << " ";
-                if (items[x][y] == nullptr) { cout << " "; } 
-                else { cout << items[x][y]->getFirstName(); }
-                cout << " ";
+                if (items[x][y] == nullptr) { 
+                    cout << " "; 
+                    cout << (canMove? "*" : " ");
+                    cout << " "; 
+                } 
+                else { 
+                    cout << (canMove? "-" : " ");
+                    cout << items[x][y]->getFirstName(); 
+                    cout << (canMove? "-" : " ");
+                }
             } cout << "|" << endl;
         }
         cout << width_space << " ";
