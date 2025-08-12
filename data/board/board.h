@@ -75,6 +75,7 @@ public:
             if (it != items_position.end()) {
                 items_position.erase(it);
             }
+
             items[x][y] = &obj;
             items_position.push_back({&obj, board_position(x,y)});
         }
@@ -97,6 +98,43 @@ public:
         }
         return { board_position() };  // Return empty position if not found
     }
+    // bool doMove(T& obj, int x, int y) {
+
+    // }
+    bool doMove(T& obj, const board_position& position) {
+        // Find obj's current position
+        auto it = std::find_if(items_position.begin(), items_position.end(),
+            [&obj](const auto& pair) { return pair.first == &obj; });
+        
+        // If object not found on board, return false
+        if (it == items_position.end()) {
+            cout << obj.name << " is not on the board." << endl;
+            return false;
+        }
+
+        // Check if move is valid
+        vector<board_position> moveable = getMoves(obj);
+        for (board_position& check : moveable) {
+            if (check.equal(position)) {
+                // Store old position
+                board_position oldPos = it->second;
+                
+                // Update board array
+                items[oldPos.x][oldPos.y] = nullptr;
+                items[position.x][position.y] = &obj;
+                
+                // Update position in items_position
+                it->second = position;
+                
+                return true;
+            }
+        }
+
+        // Move not allowed
+        cout << obj.name << " can't move to this position." << endl;
+        return false;
+    }
+
     void tostring() {
         string width_space = spacing_width(width_digits);
 
